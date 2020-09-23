@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import time
+from collections import OrderedDict
 
 from models import load_models
 
@@ -28,13 +29,11 @@ def main(args):
     """
 
     image_folder = args.file_path
-    label_folder = args.label_path
-    wu_folder = args.wu_pred
     output_folder = args.output_path
     flipflag = args.flip_flag   ## For TTA, TODO
     model_arch = args.model_arch
     model_path = args.model_path
-    save_flag = args.save_flag
+    save_flag = True
     verbose = False
     print(" output folder is ", output_folder)
 
@@ -67,17 +66,9 @@ def main(args):
     for files in os.listdir(image_folder):
         filename, ext = os.path.splitext(files)
         image_file = os.path.join(image_folder, filename) +".npy"
-        label_file = os.path.join(label_folder, filename) +".npy"
-        wu_file = os.path.join(wu_folder, filename) +".npy"
 
         image_load = np.load(image_file)
-        label_load = np.load(label_file)
-        wu_pred = np.load(wu_file)
-        wu_pred[wu_pred>0.9]=1; wu_pred[wu_pred!=1]=0  # this threshold works best for wu
-
-        label_load = label_load.transpose(2,1,0)
-        wu_pred = wu_pred.transpose(2,1,0)
-
+  
         image_load = (image_load - np.mean(image_load))/np.std(image_load)
         image_load = image_load.transpose(2,1,0)
         image_load = np.expand_dims(image_load,0)
@@ -86,13 +77,11 @@ def main(args):
         with torch.no_grad():
             image_tensor = torch.from_numpy(image_load).float().cuda()
             preds = model(image_tensor)
+            print("Prediction made for file: ", filename)
 
         logits = preds['logits']
         probits = F.softmax(logits,dim=1).data.cpu().numpy()
         pred_argmax = np.argmax(probits[0,:,:,:,:], axis=0).astype(np.float32)
-        iou_preds = computeiou(pred_argmax,label_load)
-        iou_wu = computeiou(wu_pred,label_load)
-        print(" ---- for filename %s iou preds: %f wu-model: %f ----"%(filename,iou_preds,iou_wu))
 
         if save_flag==True:
             output_file = os.path.join(output_folder,filename)+".npy"
@@ -111,8 +100,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=help_string)
 
     parser.add_argument('-f', '--file-path', type=str, metavar='DIR', help='Path where test images is located', required=True)
-    parser.add_argument('-l', '--label-path', type=str, metavar='DIR', help='Path where test data labels is located', required=True)
-    parser.add_argument('-w', '--wu-pred', type=str, metavar='DIR', help='Path where WU-predictions is located', required=True)
     parser.add_argument('-o', '--output-path', type=str, metavar='DIR', help='Path where predictions will be written out', required=True)
     parser.add_argument('-m', '--model-path', type=str, metavar='DIR', help='Path where trained model is stored', required=True)
     parser.add_argument('-arch', '--model-arch', type=str, metavar='ARCH', help='Architecture of the model (default: vnet)', default='linknet34', required=False)
