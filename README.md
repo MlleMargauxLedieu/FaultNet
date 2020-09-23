@@ -1,3 +1,35 @@
+
+
+
+# Force-ml-fault
+Training an algorithm to do fault detection. Training a 3D FaultSeg network on synthetic seismic and predicting on real data
+
+# Using FaultSeg3D as a baseline
+Using the benchmark done by https://github.com/satyakees/FaultNet to find the best network architecture for Xinming Wu's (https://github.com/xinwucwp/faultSeg) fault picking network.
+
+satyakees found that the best architecture for the dault picking task was : **Unet_ResNet1**. They provide a pretrained network on 200 images and labels of size (128,128,128).
+
+# Further training and tuning
+
+We then train further on an Equinor-made synthetic cube by Iain Sheperd, using Compound Earth Simulator. We create additional seismic by playing with frequencies, making other cubes: one containing only 10Hz frequencies and one containing 10 and 20Hz frequencies. We use this augmented data to train our network further. 
+
+We then do a prediction on Ichthys cube which is real seismic data taken from a survey in Australia. 
+
+
+# Results
+  ## Unet_ResNet1 purely trained on Wu's dataset
+  ![alt text](https://github.com/equinor/force-ml-fault/blob/master/wu_trained_real_pred.png?raw=true)
+  
+  ## Unet_ResNet1 pretrained on Wu's dataset, trained on raw synthetic data
+  ![alt text](https://github.com/equinor/force-ml-fault/blob/master/synth_raw_pred.png?raw=true)
+  
+   ## Unet_ResNet1 pretrained on Wu's dataset, trained on raw synthetic and 10Hz data
+   ![alt text](https://github.com/equinor/force-ml-fault/blob/master/synth_raw_10Hz_pred.png?raw=true)
+  
+   ## Unet_ResNet1 pretrained on Wu's dataset, trained on raw synthetic, 10Hz, and 10 + 20Hz data
+
+
+# Original README
 #### Fault picking with 3D-Unets
 
 #### Meta-overview
