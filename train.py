@@ -38,7 +38,7 @@ def compute_iou(preds, trues):
     iou = inter.sum(1)/(union.sum(1)+1e-8)
     return iou
 
-def check_folder(data_path):
+def check_folder(data_path,file_ext):
     """
       helper function to check all training data paths are correct
     """
@@ -64,21 +64,23 @@ def check_folder(data_path):
     label_list = []
 
     for image in os.listdir(image_path):
-        if image.endswith('.npy'):
+        if image.endswith(file_ext):
             image_list.append(image.split('.')[0])
 
     for label in os.listdir(label_path):
-        if label.endswith('.npy'):
+        if label.endswith(file_ext):
             label_list.append(label.split('.')[0])
 
     image_list.sort()
     label_list.sort()
 
     if not image_list == label_list:
+        print('Lists are different')
         file_list = list(set(image_list) & set(label_list))
     else:
         file_list = image_list
 
+    print("There were {} images in the training set.".format(len(file_list)))
     return file_list
 
 
@@ -98,9 +100,7 @@ def main(args):
     print("----- model arch is %s -----  "%(model_arch))
     print("----- output_channels %d "%(output_channels))
 
-    file_list_train = check_folder(training_data_path)
-
-
+    file_list_train = check_folder(training_data_path, '.dat')
     training_data_loader, validation_data_loader = dataloader.LoadData(training_data_path, file_list_train, split=0.001, \
                                                                              batch_size=batch_size, transforms=None)
 
@@ -131,6 +131,7 @@ def main(args):
         val_accuracy = []
         model.train()
         for i, (images, labels) in enumerate(training_data_loader):
+            #print("Shape of the image {}, Shape of the label: {}".format(images.shape, labels.shape))
             optimizer.zero_grad()
             with torch.set_grad_enabled(True):
                 pred_dict = model(images.float().cuda())

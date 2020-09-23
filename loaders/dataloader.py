@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from torch.utils import data
 
 from .fault_dataset import FaultPrep
+from .dat_dataset import DatDataGenerator
 
 def LoadData(training_data_path, file_list, split=0.15, workers=4, batch_size=1, transforms=None):
     
@@ -23,6 +24,3 @@ def LoadData(training_data_path, file_list, split=0.15, workers=4, batch_size=1,
     validation_loader = data.DataLoader(validation_dataset, batch_size=batch_size, num_workers=workers, shuffle=False, pin_memory=True)
     
     return training_loader, validation_loader
-    
-    
-    
