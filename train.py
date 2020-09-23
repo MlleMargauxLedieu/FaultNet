@@ -75,7 +75,6 @@ def check_folder(data_path,file_ext):
     label_list.sort()
 
     if not image_list == label_list:
-        print('Lists are different')
         file_list = list(set(image_list) & set(label_list))
     else:
         file_list = image_list
@@ -131,7 +130,6 @@ def main(args):
         val_accuracy = []
         model.train()
         for i, (images, labels) in enumerate(training_data_loader):
-            #print("Shape of the image {}, Shape of the label: {}".format(images.shape, labels.shape))
             optimizer.zero_grad()
             with torch.set_grad_enabled(True):
                 pred_dict = model(images.float().cuda())
