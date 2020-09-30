@@ -28,6 +28,9 @@ We then do a prediction on Ichthys cube which is real seismic data taken from a 
   
    ## Unet_ResNet1 pretrained on Wu's dataset, trained on raw synthetic, 10Hz, and 10 + 20Hz data
   ![alt text](https://github.com/equinor/force-ml-fault/blob/master/synth_raw_10Hz_20Hz_pred.png?raw=true)
+  
+   ## Unet_ResNet1 pretrained on Wu's dataset, trained on raw synthetic, 10Hz, 10 + 20Hz, and added Gaussian noise (0.1 and 0.2 std) data
+  ![alt text](https://github.com/equinor/force-ml-fault/blob/master/synth_raw_10_20Hz_nosie12.png?raw=true)
 
 # Original README
 #### Fault picking with 3D-Unets
