@@ -1,7 +1,7 @@
 
 
 
-# Force-ml-fault
+# Force ML Fault Segmentation picking
 Training an algorithm to do fault detection. Training a 3D FaultSeg network on synthetic seismic and predicting on real data
 
 # Using FaultSeg3D as a baseline
